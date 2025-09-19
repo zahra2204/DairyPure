@@ -1,0 +1,186 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{%block title%} Product-Detail {% endblock title %}
+
+{% block main-content %}
+<div class="container">
+    <div class="row flex justify-content-between">
+        <div class="img2 col-lg-5 mt-5">
+            <img src="{{product.product_image.url}}" class="image col-xs-6 col-sm-12 col-lg-12 mt-3 text-sm-center w-75 h-75" alt="">
+        </div>
+        <div class="productdetail col-lg-5">
+            <h2 style="font-family: Georgia; font-size: 45px;">{{product.title}}</h2>
+            <h5>Rs.{{product.discounted_price}}/-</h5>
+            <small class="text-decoration-line-through text-muted fs-5"><del>Rs. {{product.selling_price}}/-</del></small>
+            <br><br>
+            <h4>Product Features</h4>
+            <ul class="fs-5" style="font-family: Rajdhani;">
+                <li>{{product.description}}</li>
+            </ul>
+            <form action="/add-to-cart" class="d-inline">
+                <input type="hidden" name="prod_id" value="{{product.id}}"/>
+                <button type="submit" class="btn btn-primary shadow px-5 py-2">Add to Cart</button>
+            </form>
+            <a href="{% url 'showcart' %}" class="btn btn-warning shadow px-5 py-2 ms-4">Buy Now</a>
+            {% if wishlist %}
+            <a pid="{{product.id}}" class="minus-wishlist btn btn-danger shadow px-5 py-2 ms-4"><i class="fas fa-heart fa-lg"></i></a>
+            {% else %}
+            <a pid="{{product.id}}" class="plus-wishlist btn btn-success shadow px-5 py-2 ms-4"><i class="fas fa-heart fa-lg"></i></a>
+            {% endif %}
+            <ul class="mr-50 float-start">
+                <li class="mb-3 my-3"><b>Packed:</b> <span class="text-brand">{{product.MFD}}</span> </li>
+                <li class="mb-3"><b>Use by:</b> <span class="text-brand">{{product.use_by}}</span> </li>
+            </ul>
+        </div>
+    </div><br>
+
+<div class="container">
+    <div class="row mt-60">
+        <div class="col-12">
+            <h2 class="section-title style-1 mb-30">Related Products</h2>
+        </div>
+
+        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+            <!-- Indicators -->
+            <ul class="carousel-indicators">
+                {% for p in related_products|slice:":4" %}
+                <li data-bs-target="#productCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></li>
+                {% endfor %}
+            </ul>
+
+            <!-- Carousel Inner -->
+            <div class="carousel-inner">
+                {% for p in related_products %}
+                {% if forloop.first or forloop.counter0|divisibleby:4 %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="row related-products">
+                {% endif %}
+
+                        <!-- Product Item -->
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                            <div class="goodnesssec buttermilk curdbgpro position-relative">
+                                <a href="{% url 'product-detail' p.id %}" class="d-block position-relative">
+                                    <img class="hover-img img-fluid align-items-center" src="{{ p.product_image.url }}" style="width=300px; height=120px; object-fit: contain;" alt=""/>
+                                </a>
+                                <div class="product-action-1 position-absolute top-50 start-50 translate-middle d-flex gap-2">
+                                    <a aria-label="Quick View" class="action-btn small hover-up bg-white p-2 rounded-circle shadow text-dark" href="{% url 'product-detail' p.id %}">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a pid="{{p.id}}" aria-label="Add to Wishlist" class="plus-wishlist btn btn-success small hover-up bg-white p-2 rounded-circle shadow text-dark" href="#" tabindex="0">
+                                        <i class="fa fa-heart"></i>
+                                    </a>
+                                </div>
+                                <div class="product-content-wrap">
+                                    <h5 class="text-center"><a href="{% url 'product-detail' p.id %}" style="color:black;">{{ p.title|truncatechars:20 }}</a></h5>
+                                    <div class="goodnessseccont text-center">
+                                        <span class="fw-bold text-danger">Rs.{{ p.discounted_price }}/-</span>
+                                        <span class="fw-light text-decoration-line-through">{{ p.selling_price }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                {% if forloop.counter0|add:1|divisibleby:4 or forloop.last %}
+                    </div> <!-- Close row -->
+                </div> <!-- Close carousel-item -->
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Controls -->
+            <a class="carousel-control-prev" href="#productCarousel" role="button" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#productCarousel" role="button" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </a>
+        </div>
+    </div>
+</div>
+<br>
+</div>
+
+<style>
+/* Style for carousel control buttons */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+    opacity: 1; /* Ensure buttons are always visible */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    border-radius: 50%; /* Make buttons circular */
+    padding: 15px;
+}
+
+/* Ensure the buttons appear on top of images */
+.carousel-control-prev,
+.carousel-control-next {
+    z-index: 1000;
+}
+
+/* Adjust button position */
+.carousel-control-prev {
+    left: -30px; /* Move slightly outside */
+}
+
+.carousel-control-next {
+    right: -30px;
+}
+
+/* Hover effect */
+.carousel-control-prev:hover .carousel-control-prev-icon,
+.carousel-control-next:hover .carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Hide all carousel indicators by default */
+.carousel-indicators {
+    display: none !important;
+}
+
+.col-md-3 {
+    display: inline-block;
+    margin-left:-4px;
+}
+
+.col-md-3 img {
+    width: 250px;
+    max-height: 250px;
+}
+
+.goodnesssec {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Initially Hidden Buttons */
+.product-action-1 {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+/* Show Buttons on Hover */
+.goodnesssec:hover .product-action-1 {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.product-action-1 a {
+    border-radius: 0; /* Removes rounded edges */
+    width: 40px; /* Adjust width as needed */
+    height: 40px; /* Adjust height as needed */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+</style>
+{% endblock main-content %}

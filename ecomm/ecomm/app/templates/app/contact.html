@@ -1,0 +1,50 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{%block title%} Contact Us {% endblock title %}
+
+{% block main-content %}
+<style>
+    body {
+        background-image: url('/static/app/images/DairyFresh_bg.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+    }
+</style>
+
+
+<div class="container mt-3">
+     <h3>Contact Us</h3><br>
+     <form action="" method="post">
+         {% csrf_token %}
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Enter Your Name">
+          </div><br>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter Your Email">
+          </div><br>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter Your Phone Number">
+          </div><br>
+          <div class="form-group">
+           <div class="form-group">
+            <label for="desc">Need help or have questions?</label>
+            <textarea class="form-control" id="desc" name="desc" rows="3"></textarea>
+          </div><br>
+          <button type="submit" class="btn btn-success">Submit</button></div>
+     </form>
+</div><br><br><br>
+{% endblock main-content %}
+
+{%block js%}
+<script>
+{% if thank %}
+alert("Thank you for contacting us. Your request has been received, we will get back to you soon! Sorry for the inconvenience.");
+document.location = "http://127.0.0.1:8000/";
+{%endif%}
+</script>
+{% endblock js %}
